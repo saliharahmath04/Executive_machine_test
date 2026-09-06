@@ -1,0 +1,17 @@
+[
+  {
+    "customer_index":1976,
+    "risk_probability":0.8577756722,
+    "tenure":1.0,
+    "safe_top_features":[
+      "tenure",
+      "InternetService_Fiber optic",
+      "MonthlyCharges"
+    ],
+    "retrieved_clause_numbers":[
+      1,
+      3,
+      4
+    ]
+  }
+]

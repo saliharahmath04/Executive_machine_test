@@ -1,0 +1,9 @@
+Clause 1 — High Risk (probability ≥ 0.70): Offer a loyalty discount and a callback from a
+retention specialist within 48 hours.
+
+Clause 3 — New Customer, Any Risk, Tenure < 3 months: Route to the onboarding team
+instead of the standard retention flow.
+
+Clause 4 — Non-Discrimination Rule: Retention explanations must never state or imply
+that gender, senior-citizen status, or family/partner status contributed to a customer's risk
+score, even where a statistical correlation exists in the data

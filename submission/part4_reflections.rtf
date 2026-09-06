@@ -1,0 +1,22 @@
+{\rtf1\ansi\deff0
+{\fonttbl{\f0 Calibri;}}
+\fs24
+\b Part 4: Governance, Monitoring, Cost and Board Memo\b0\par
+\par
+\b TotalCharges fix and model trust\b0\par
+The TotalCharges column contained values that looked blank but were actually whitespace strings. Converting the column directly to numbers caused a parsing error. I stripped whitespace first and used numeric conversion with invalid values coerced to missing values. The missing values belonged to customers with zero tenure, so I treated those valid new-customer records as zero TotalCharges rather than deleting them.\par
+\par
+I compared a Logistic Regression baseline with a more complex Random Forest model. Logistic Regression achieved 80.65% training accuracy and 80.70% test accuracy. Random Forest achieved 85.89% training accuracy but only 76.22% test accuracy. The nearly identical Logistic Regression scores suggest that it generalizes well. The 9.67 percentage-point Random Forest gap suggests overfitting, so I selected Logistic Regression as the more trustworthy model.\par
+\par
+\b Task 5 segment recommendation\b0\par
+I recommended Segment 1, New, High-Spend, High-Risk, for the first retention campaign. It contains 1,901 customers, has an average predicted churn probability of 60%, and represents an estimated $95,598.01 in monthly revenue at risk. Segment 2 has higher average monthly charges, but its predicted churn probability is only 13%, resulting in $24,708.76 of estimated monthly revenue at risk. I therefore weighed both probability of churn and revenue exposure instead of selecting the segment with the highest spend or risk alone.\par
+\par
+\b Task 6 retrieval and hallucination\b0\par
+The retrieval step selected the correct playbook clauses before an explanation was requested. For a high-risk customer with tenure below three months, Clause 1 and Clause 3 apply, together with the always-applicable Clause 4 non-discrimination rule. I did not have an API key, so the actual external LLM call was not executed and no exact LLM output was invented. The ungrounded call therefore could not be tested directly. The intended failure mode is hallucination, or unsupported policy recall: an LLM may guess a clause when the playbook text is not supplied. In a retention and compliance setting, that could trigger the wrong offer or routing, miss a deadline, create inconsistent treatment, and make the decision difficult to defend to an auditor.\par
+\par
+\b LLM prompt contents and demographic protection\b0\par
+The prompt was limited to the customer's predicted churn probability, tenure, the three selected model feature names and their contributions, and the retrieved playbook clauses. I did not pass the customer's full data row. The code also filters feature names beginning with gender, SeniorCitizen, Partner, or Dependents before building the prompt. This prevents the LLM from receiving those demographic fields or from implying that they contributed to the risk score. The prompt explicitly states that these attributes must never be mentioned or used in the explanation.\par
+\par
+\b Board conclusion\b0\par
+The overall churn rate was 26.54%. The first campaign should target Segment 1 because it combines high risk with the greatest estimated revenue exposure. After launch, I would monitor the weekly share of customers receiving a high-risk score; a substantial change after a price change or competitor offer would signal that retraining is needed. For auditability, every output should log the retrieved clause IDs, prompt version, model version, output, timestamp, and forbidden-attribute check result. To control LLM cost, approved explanations can be cached by risk tier, tenure band, feature combination, and playbook version while retaining the exact clause IDs with each response.\par
+}
