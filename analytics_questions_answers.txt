@@ -1,0 +1,87 @@
+TELCO CUSTOMER CHURN ANALYSIS
+ANALYTICAL QUESTIONS AND ANSWERS
+
+Dataset: Telco Customer Churn
+Number of records: 7,043
+
+PART 1 - CHURN KPI ANALYSIS
+
+Question 1: What is the overall customer churn rate?
+Answer: The overall churn rate is 26.54%. There are 1,869 churned customers out of 7,043 customers.
+
+Question 2: Which contract type has the highest churn rate?
+Answer: Month-to-month contracts have the highest churn rate at 42.71%. One-year contracts have an 11.27% churn rate, while two-year contracts have a 2.83% churn rate.
+
+Question 3: Which internet service has the highest churn rate?
+Answer: Fiber optic customers have the highest churn rate at 41.89%. DSL customers have an 18.96% churn rate, and customers without internet service have a 7.40% churn rate.
+
+Question 4: What is the relationship between tenure and churn?
+Answer: Tenure has a negative Pearson correlation of -0.352 with churn. Churned customers have a mean tenure of 18.0 months and a median of 10 months. Customers who did not churn have a mean tenure of 37.6 months and a median of 38 months. This indicates that newer customers are more likely to churn.
+
+PART 2 - DATA CLEANING AND MODEL COMPARISON
+
+Question 5: How was the TotalCharges data quality problem handled?
+Answer: TotalCharges was stripped of whitespace and converted to numeric values. Invalid values were treated as missing. Missing TotalCharges values for customers with zero tenure were set to zero because these are valid new-customer records. Any remaining missing values were filled with the median TotalCharges value.
+
+Question 6: Which model performed better and was more trustworthy?
+Answer: Logistic Regression was selected as the more trustworthy model because it generalized better. Its training accuracy was 80.65%, test accuracy was 80.70%, and test ROC AUC was 0.8418. Random Forest had 85.11% training accuracy, 75.94% test accuracy, and test ROC AUC of 0.8415. The larger Random Forest train-test gap indicates overfitting.
+
+Question 7: What were the Logistic Regression test classification results?
+Answer: For customers who did not churn, precision was 0.85, recall was 0.89, and F1-score was 0.87. For customers who churned, precision was 0.66, recall was 0.57, and F1-score was 0.61. Overall test accuracy was 0.81.
+
+PART 3 - CUSTOMER SEGMENTATION AND REVENUE RISK
+
+Question 8: How were customers segmented?
+Answer: Customers were grouped into four K-Means segments using tenure, MonthlyCharges, and predicted churn probability. The model used the Logistic Regression churn probabilities and standardized the segmentation inputs.
+
+Question 9: Which segment should receive the first retention campaign?
+Answer: Segment 1, New, High-Spend, High-Risk, should receive the first campaign. It contains 1,901 customers, has an average churn probability of 60%, and has an estimated monthly revenue at risk of $95,598.01.
+
+Question 10: What are the other segment results?
+Answer:
+- Segment 2: Mature, High-Spend, Low-Risk; 2,013 customers; 13% average churn probability; $24,708.76 monthly revenue at risk.
+- Segment 3: New, Low-Spend, High-Risk; 1,893 customers; 22% average churn probability; $15,774.56 monthly revenue at risk.
+- Segment 0: Mature, Low-Spend, Low-Risk; 1,236 customers; 3% average churn probability; $1,274.86 monthly revenue at risk.
+
+Question 11: How was revenue at risk calculated?
+Answer: Estimated monthly revenue at risk was calculated as the number of customers multiplied by average monthly charges multiplied by average predicted churn probability.
+
+PART 4 - GOVERNANCE, MONITORING, COST, AND BOARD RECOMMENDATION
+
+Question 12: How should the model be monitored after deployment?
+Answer: Monitor the weekly share of customers receiving a high-risk score. A substantial change after a price change, competitor offer, or other business change should trigger investigation and possible model retraining. Model performance, data quality, segment sizes, and campaign outcomes should also be reviewed regularly.
+
+Question 13: What information should be logged for auditability?
+Answer: Each output should log the retrieved clause IDs, prompt version, model version, generated output, timestamp, and forbidden-attribute check result. These records make decisions traceable and support compliance reviews.
+
+Question 14: How can LLM usage costs be controlled?
+Answer: Approved explanations can be cached by risk tier, tenure band, feature combination, and playbook version. The exact retrieved clause IDs must be retained with each cached response so that the explanation remains traceable.
+
+Question 15: What is the board-level recommendation?
+Answer: Start the retention campaign with Segment 1 because it combines high churn risk with the greatest estimated revenue exposure. Use controlled experiments to measure retention impact and monitor the model and campaign for drift or unintended effects.
+
+PART 5 - SEGMENT RECOMMENDATION
+
+Question 16: Why was Segment 1 selected instead of the highest-spend segment?
+Answer: Segment 1 was selected because campaign priority should consider both the probability of churn and the amount of revenue exposed. Segment 2 has higher average monthly charges, but its average churn probability is only 13%, producing a lower estimated monthly revenue at risk of $24,708.76.
+
+PART 6 - RETRIEVAL, HALLUCINATION, AND RESPONSIBLE AI
+
+Question 17: Which retention clauses apply to a high-risk customer with tenure below three months?
+Answer: Clause 1 applies because the customer is high risk, Clause 3 applies because tenure is below three months, and Clause 4 always applies as the non-discrimination rule. The current analysis identified clause numbers 1, 3, and 4 for the highest-risk customer.
+
+Question 18: What hallucination risk exists if the LLM is not given the playbook text?
+Answer: The LLM may guess or invent a policy clause. This could trigger the wrong offer or routing, miss a response deadline, create inconsistent treatment, and make the decision difficult to defend to an auditor. Retrieval should therefore happen before generation, and the response should be grounded in the retrieved clauses.
+
+Question 19: What information should be included in the LLM prompt?
+Answer: The prompt should include the predicted churn probability, customer tenure, safe model feature names and contributions, and the retrieved playbook clauses. It should not include the customer's complete data row or protected demographic attributes.
+
+Question 20: How are protected demographic attributes handled?
+Answer: Feature names beginning with gender, SeniorCitizen, Partner, or Dependents are filtered out before prompt construction. The explanation must never state or imply that these attributes contributed to the risk score, even if a statistical correlation exists in the data.
+
+Question 21: Was an external LLM call executed?
+Answer: No. An API key was not available, so no external LLM call was executed and no exact LLM output was invented. The project tests the retrieval and prompt-safety logic locally instead.
+
+FINAL CONCLUSION
+
+The overall churn rate is 26.54%, with the greatest risk among month-to-month customers, fiber optic customers, and customers with short tenure. Logistic Regression is the preferred model because its train and test accuracy are nearly identical and its test ROC AUC is 0.8418. Segment 1 is the first retention priority because it has the greatest estimated monthly revenue at risk. Any automated retention explanation must use retrieved policy clauses, protect demographic attributes, log its decision context, and be monitored for drift and compliance.
